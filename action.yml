@@ -1,4 +1,4 @@
-name: 'Dokploy Deployment'
+name: 'Dokploy Deployment Action'
 description: 'Trigger a Dokploy deployment'
 branding:
   icon: 'upload-cloud'
