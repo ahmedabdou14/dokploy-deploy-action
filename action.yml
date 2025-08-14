@@ -8,7 +8,7 @@ inputs:
     description: 'Dokploy base URL, e.g. https://dokploy.example.com'
     required: true
   auth_token:
-    description: 'Dokploy authentication token'
+    description: 'Dokploy API key'
     required: true
   application_id:
     description: 'Dokploy application ID'
@@ -27,7 +27,7 @@ runs:
           "$DOKPLOY_URL/api/application.deploy" \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
-          -H "Authorization: Bearer $DOKPLOY_AUTH_TOKEN" \
+          -H "x-api-key: $DOKPLOY_AUTH_TOKEN" \
           -d "{\"applicationId\": \"$DOKPLOY_APPLICATION_ID\"}" \
           -w "%{http_code}" \
           -o /dev/null \

@@ -6,7 +6,7 @@ This GitHub Action triggers a deployment on Dokploy.
 
 ### `auth_token`
 
-**Required** The Dokploy authentication token.
+**Required** The Dokploy API key (used as x-api-key header).
 
 ### `application_id`
 
@@ -35,9 +35,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Dokploy Deployment
-      uses: benbristow/dokploy-deploy-action@0.0.1
+      uses: ahmedabdou14/dokploy-deploy-action@v1.0.0
       with:
-        auth_token: ${{ secrets.DOKPLOY_AUTH_TOKEN }}
+        auth_token: ${{ secrets.DOKPLOY_API_KEY }}
         application_id: ${{ secrets.DOKPLOY_APPLICATION_ID }}
         dokploy_url: ${{ secrets.DOKPLOY_URL }}
 ```
