@@ -45,7 +45,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Deploy to Dokploy
-      uses: ahmedabdou14/dokploy-deploy-action@v1.0.0
+      uses: ahmedabdou14/dokploy-deploy-gha@v1.0.0
       with:
         dokploy_url: ${{ secrets.DOKPLOY_URL }}
         auth_token: ${{ secrets.DOKPLOY_API_KEY }}
