@@ -11,8 +11,11 @@ inputs:
     description: 'Dokploy API key'
     required: true
   application_id:
-    description: 'Dokploy application ID'
-    required: true
+    description: 'Dokploy application ID (for application deployments)'
+    required: false
+  compose_id:
+    description: 'Dokploy compose ID (for compose deployments)'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -22,13 +25,30 @@ runs:
         DOKPLOY_URL: ${{ inputs.dokploy_url }}
         DOKPLOY_AUTH_TOKEN: ${{ inputs.auth_token }}
         DOKPLOY_APPLICATION_ID: ${{ inputs.application_id }}
+        DOKPLOY_COMPOSE_ID: ${{ inputs.compose_id }}
       run: |
+        if [ -n "$DOKPLOY_APPLICATION_ID" ] && [ -n "$DOKPLOY_COMPOSE_ID" ]; then
+          echo "Error: Please provide either application_id OR compose_id, not both"
+          exit 1
+        elif [ -n "$DOKPLOY_APPLICATION_ID" ]; then
+          DEPLOYMENT_TYPE="application"
+          API_ENDPOINT="$DOKPLOY_URL/api/application.deploy"
+          REQUEST_BODY="{\"applicationId\": \"$DOKPLOY_APPLICATION_ID\"}"
+        elif [ -n "$DOKPLOY_COMPOSE_ID" ]; then
+          DEPLOYMENT_TYPE="compose"
+          API_ENDPOINT="$DOKPLOY_URL/api/compose.deploy"
+          REQUEST_BODY="{\"composeId\": \"$DOKPLOY_COMPOSE_ID\"}"
+        else
+          echo "Error: Please provide either application_id or compose_id"
+          exit 1
+        fi
+
         response=$(curl -X 'POST' \
-          "$DOKPLOY_URL/api/application.deploy" \
+          "$API_ENDPOINT" \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -H "x-api-key: $DOKPLOY_AUTH_TOKEN" \
-          -d "{\"applicationId\": \"$DOKPLOY_APPLICATION_ID\"}" \
+          -d "$REQUEST_BODY" \
           -w "%{http_code}" \
           -o /dev/null \
           -s)
@@ -37,3 +57,5 @@ runs:
           echo "Deployment failed with status code: $response"
           exit 1
         fi
+        
+        echo "Successfully triggered $DEPLOYMENT_TYPE deployment"
